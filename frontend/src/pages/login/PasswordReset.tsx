@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import "../../css/base-pc.css";
@@ -10,16 +10,9 @@ import { RESULT_PAGE_STATE } from "../../components/ResultPageGuard";
 const PasswordReset: React.FC = () => {
     const navigate = useNavigate();
     const [msg, setMsg] = useState("");
-    const [emailAddr, setEmailAddr] = useState("");
+    const [emailAddr] = useState(() => sessionStorage.getItem("emailAddr") ?? "");
     const [newPassword, setNewPassword] = useState("");
     const [newConfirmPassword, setNewConfirmPassword] = useState("");
-
-    useEffect(() => {
-        const emailAddrSessionInfo = sessionStorage.getItem("emailAddr");
-        if(emailAddrSessionInfo){
-            setEmailAddr(emailAddrSessionInfo);
-        }
-    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,7 +37,7 @@ const PasswordReset: React.FC = () => {
                 navigate("/login/password-reset/fail", { state: RESULT_PAGE_STATE });
             }
         }
-        catch(err){
+        catch{
             setMsg("Please try again later.");
         }
     }

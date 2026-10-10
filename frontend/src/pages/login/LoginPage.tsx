@@ -20,7 +20,7 @@ const LoginPage: React.FC = () => {
             await login(emailAddr, password);
             navigate("/login/success", { state: RESULT_PAGE_STATE });
         }
-        catch(err){
+        catch{
             navigate("/login/fail", { state: RESULT_PAGE_STATE });
         }
     }, [emailAddr, password, login, navigate]);

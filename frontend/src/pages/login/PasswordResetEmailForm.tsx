@@ -24,7 +24,7 @@ const PasswordResetEmailForm: React.FC = () => {
             });
             navigate("/login/password-reset-email-check/completed", { state: RESULT_PAGE_STATE });
         }
-        catch(err){
+        catch{
             setMsg("Please try again later.");
         }
     }
