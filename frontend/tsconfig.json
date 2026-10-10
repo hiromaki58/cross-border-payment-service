@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "jsx": "react",
+    "jsx": "react-jsx",
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Projects */
@@ -103,11 +103,8 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true,                               /* Skip type checking all .d.ts files. */
-    "baseUrl": "./",
-    "paths": {
-      "@testing-library/react": ["node_modules/@testing-library/react"]
-    }
+    "baseUrl": "./"
   },
-    "include": ["src/**/*.ts", "test/**/*"],
+    "include": ["src"],
     "exclude": ["node_modules", "src/dist"]
 }

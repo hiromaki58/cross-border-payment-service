@@ -689,7 +689,7 @@ footer
     }
 }
 .footer-sns ul li {
-    background: url(../../public/img/ico_arrow_01.png) left center no-repeat;
+    background: url(../img/ico_arrow_01.png) left center no-repeat;
     margin: 0 0 1px 0;
     padding: 0 0 1px 10px;
     border-bottom: 1px solid #222;
