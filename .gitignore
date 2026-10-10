@@ -1,6 +1,5 @@
 # Environment
 HELP.md
-*.properties
 .env
 
 # CI/CD
