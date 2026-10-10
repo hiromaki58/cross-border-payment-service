@@ -5,6 +5,7 @@ import "../../css/base-pc.css";
 import "../../css/login.css";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../cmn/Constant";
+import { RESULT_PAGE_STATE } from "../../components/ResultPageGuard";
 
 const PasswordResetEmailForm: React.FC = () => {
     const navigate = useNavigate();
@@ -21,7 +22,7 @@ const PasswordResetEmailForm: React.FC = () => {
                 credentials: "include",
                 body: JSON.stringify({ emailAddr }),
             });
-            navigate("/login/password-reset-email-check/completed");
+            navigate("/login/password-reset-email-check/completed", { state: RESULT_PAGE_STATE });
         }
         catch(err){
             setMsg("Please try again later.");

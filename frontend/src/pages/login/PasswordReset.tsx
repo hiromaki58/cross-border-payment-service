@@ -5,6 +5,7 @@ import "../../css/base-pc.css";
 import "../../css/login.css";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../cmn/Constant";
+import { RESULT_PAGE_STATE } from "../../components/ResultPageGuard";
 
 const PasswordReset: React.FC = () => {
     const navigate = useNavigate();
@@ -37,10 +38,10 @@ const PasswordReset: React.FC = () => {
             });
 
             if(response.ok){
-                navigate("/login/password-reset/success");
+                navigate("/login/password-reset/success", { state: RESULT_PAGE_STATE });
             }
             else{
-                navigate("/login/password-reset/fail");
+                navigate("/login/password-reset/fail", { state: RESULT_PAGE_STATE });
             }
         }
         catch(err){

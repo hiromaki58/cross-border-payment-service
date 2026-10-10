@@ -6,6 +6,7 @@ import "../../css/login.css"
 
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthProvider } from "../../context/AuthContext";
+import { RESULT_PAGE_STATE } from "../../components/ResultPageGuard";
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -17,10 +18,10 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         try{
             await login(emailAddr, password);
-            navigate("/login/success");
+            navigate("/login/success", { state: RESULT_PAGE_STATE });
         }
         catch(err){
-            navigate("/login/fail");
+            navigate("/login/fail", { state: RESULT_PAGE_STATE });
         }
     }, [emailAddr, password, login, navigate]);
 
