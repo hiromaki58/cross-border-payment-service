@@ -1,0 +1,95 @@
+@charset "UTF-8";
+
+/* ==========================================================
+ login-area
+========================================================== */
+.sec-cmn-in-01 {
+	margin: 60px 0 50px 0;
+	text-align: left;
+	font-size: 40px;
+	line-height: 1.1;
+}
+.sec-cmn-01-fail-in {
+	margin: 0 0 50px 0;
+	font-size: 40px;
+}
+.sec-cmn-01-detail {
+	margin: 0 0 145px 0;
+	font-size: 20px;
+}
+.form-login {
+	width: 600px;
+	margin: 0 auto;
+}
+.form-login-ttl {
+	margin: 30px 0 9px 0;
+	text-align: left;
+	font-size: 16px;
+	line-height: 1.125;
+}
+.form-login-input {
+	width: 600px;
+	height: 40px;
+	padding: 0 0 0 5px;
+	font-size: 16px;
+	line-height: 1.125;
+}
+.form-login-button {
+	background: #1C7CD5;
+	margin: 55px 45%;
+	padding: 12px 34px;
+	border-style: none;
+	border-radius: 3px;
+	font-size: 16px;
+	color: #fff;
+}
+.area-cmn-01 a {
+	margin: 0 0 150px 0;
+	padding: 0 0 0 4%;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+}
+/* ==========================================================
+ reset
+========================================================== */
+.area-reset {
+	padding: 0 0 312px 0;
+}
+.form-reset-button {
+	background: #1C7CD5;
+	margin: 50px auto 0 auto;
+	padding: 12px 34px;
+
+	display: block;
+	border-style: none;
+	border-radius: 3px;
+
+	font-size: 16px;
+	color: #fff;
+}
+.form-reset-in {
+	width: 600px;
+	margin: 0 auto;
+}
+.form-reset-ttl {
+	font-size: 16px;
+}
+.form-reset-mail {
+	padding: 0 0 0 10px;
+	font-size: 20px;
+}
+.btn-registration-password {
+	margin: 103px auto 0 auto;
+	display: block;
+	text-align: center;
+}
+.btn-registration-password-01{
+	background: #1C7CD5;
+	padding: 12px 34px;
+	display: inline-block;
+	border-style: none;
+	border-radius: 3px;
+	font-size: 16px;
+	color: #fff;
+}
