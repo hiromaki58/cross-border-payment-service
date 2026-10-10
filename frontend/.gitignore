@@ -3,7 +3,7 @@
 /.pnp
 .pnp.js
 
-# production build (react-scripts build)
+# production build (vite build, outDir: "build")
 /build
 
 # tsc output (tsconfig.json "outDir": "./src/dist")
