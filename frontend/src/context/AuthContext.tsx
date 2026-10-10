@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from "react";
-import { API_BASE_URL } from "src/cmn/Constant";
-import { AuthContextType } from "src/model/Auth";
+import { API_BASE_URL } from "../cmn/Constant";
+import { AuthContextType } from "../model/Auth";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    // Restore the UI login state after a reload (display only; the server decides authorization)
+    const [isLoggedIn, setIsLoggedIn] = useState(() => sessionStorage.getItem("isLoggedIn") === "true");
 
     // To login
     const login = useCallback(async (emailAddr: string, password: string) => {
