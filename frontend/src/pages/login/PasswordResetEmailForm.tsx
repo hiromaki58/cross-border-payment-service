@@ -3,7 +3,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import "../../css/base-pc.css";
 import "../../css/login.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../../cmn/Constant";
 import { RESULT_PAGE_STATE } from "../../components/ResultPageGuard";
 
@@ -35,17 +35,17 @@ const PasswordResetEmailForm: React.FC = () => {
             <article className="contents">
                 <div className="area-cmn-01">
                     <section className="sec-cmn-01">
-                        <h1 className="sec-cmn-in-01">Login</h1>
+                        <h1 className="sec-cmn-in-01">Password reset</h1>
                         <form className="form-login" onSubmit={handleSubmit}>
                             <div className="form-login-in">
                                 <div className="form-login-ttl">E-mail address</div>
                                 <input className="form-login-input" type="email" id="email" value={emailAddr} onChange={(e) => setEmailAddr(e.target.value)} required placeholder="E-mail" /><br />
                             </div>
 
-                            <input className="form-login-button" type="submit" value="login" />
+                            <input className="form-login-button" type="submit" value="Send" />
                         </form>
                         {msg && <p>{msg}</p>}
-                        <a href="./reissue.html">If you forget password</a>
+                        <Link to="/login">Back to login page</Link>
                     </section>
                 </div>
             </article>

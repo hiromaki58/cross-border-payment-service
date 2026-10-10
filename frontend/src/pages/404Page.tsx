@@ -1,8 +1,9 @@
 import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import { Link } from "react-router-dom";
 
-const HomePage: React.FC = () => {
+const NotFoundPage: React.FC = () => {
     return (
         <div className="wrapper">
             <Header />
@@ -10,7 +11,7 @@ const HomePage: React.FC = () => {
                 <div className="area-cmn-01">
                     <section className="sec-cmn-01">
                         <h1 className="sec-cmn-in-01">Error Code: 404</h1>
-                        <a href="./index.html">Back to top page</a>
+                        <Link to="/">Back to top page</Link>
                     </section>
                 </div>
             </article>
@@ -19,4 +20,4 @@ const HomePage: React.FC = () => {
     );
 };
 
-export default HomePage;
+export default NotFoundPage;
