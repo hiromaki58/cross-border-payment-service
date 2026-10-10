@@ -831,7 +831,6 @@ section
     background-position: center;
     background-size: cover;
 }
-_:lang(x)+_:-webkit-full-screen-document,
 .img-game {
     width: 100%;
     max-width: 390px;
