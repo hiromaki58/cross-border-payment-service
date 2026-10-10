@@ -1,0 +1,27 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# production build (react-scripts build)
+/build
+
+# tsc output (tsconfig.json "outDir": "./src/dist")
+/src/dist
+
+# testing
+/coverage
+
+# environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+
+# logs / caches
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.eslintcache
+
+# OS
+.DS_Store
