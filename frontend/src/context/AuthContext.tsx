@@ -3,11 +3,17 @@ import { AuthContextType } from "../model/Auth";
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-// Login (Google / one-time e-mail code) is not implemented yet.
-// When it is added, set the login state here and call the backend logout API in logout().
+// The login state here only controls the UI; the backend session decides authorization.
+// TODO: call the backend logout API in logout().
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     // Restore the UI login state after a reload (display only; the server decides authorization)
     const [isLoggedIn, setIsLoggedIn] = useState(() => sessionStorage.getItem("isLoggedIn") === "true");
+
+    // Called after the backend accepted a passkey login
+    const login = useCallback(() => {
+        sessionStorage.setItem("isLoggedIn", "true");
+        setIsLoggedIn(true);
+    }, []);
 
     // To logout: clear all client-side login information
     const logout = useCallback(() => {
@@ -17,7 +23,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }, []);
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, logout }}>
+        <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

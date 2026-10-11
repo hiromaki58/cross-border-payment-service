@@ -50,3 +50,8 @@
 	text-align: center;
 	text-decoration: none;
 }
+/* The passkey button label is longer than "login", so center it as a block */
+.form-login-button-passkey {
+	display: block;
+	margin: 55px auto;
+}

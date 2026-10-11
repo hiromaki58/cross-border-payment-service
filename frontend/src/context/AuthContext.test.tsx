@@ -30,6 +30,17 @@ describe("AuthContext", () => {
         expect(result.current.isLoggedIn).toBe(true);
     });
 
+    test("login stores the login state for the UI", () => {
+        const { result } = renderHook(() => useAuthProvider(), { wrapper });
+
+        act(() => {
+            result.current.login();
+        });
+
+        expect(result.current.isLoggedIn).toBe(true);
+        expect(sessionStorage.getItem("isLoggedIn")).toBe("true");
+    });
+
     test("logout clears login state and e-mail address without calling a non-existent API", () => {
         sessionStorage.setItem("isLoggedIn", "true");
         sessionStorage.setItem("emailAddr", "user@example.com");
