@@ -387,10 +387,6 @@ contents
         display: none;
     }
 }
-.game-contents {
-    width: 100%;
-    float: none;
-}
 .contents-ttl {
     margin: 0 0 40px 0;
     position: relative;
@@ -430,9 +426,6 @@ player profile
     width: 234.5px;
     height: 372px;
 }
-.sec-player-info-01 {
-    margin-bottom: 39px;
-}
 .form-cmn-01-wrap {
     width: 602px;
     margin: 0 0 0 100px;
@@ -443,58 +436,6 @@ player profile
 }
 .list-basic-02 {
     width: 500px;
-}
-.ttl-register-player {
-    margin: 0 0 35px 0;
-    padding: 0 0 0 15px;
-    border-left: 4px solid #4d4d4d;
-    line-height: 1;
-    letter-spacing: 0em;
-    font-size: 22px;
-    font-weight: bold;
-    color: #4D4D4D;
-}
-.ttl-player-info {
-    margin-bottom: 14px;
-    font-size: 16px;
-    font-family: "Helvetica Neue", "M PLUS 1p", "Hiragino Kaku Gothic Pro", "ヒラギノ角ゴ Pro", "Hiragino Kaku Gothic Pro", "メイリオ", "Meiryo", sans-serif;
-    color: #373A3C;
-}
-.ttl-player-img {
-    margin-left: 50px;
-}
-.txt-player-info {
-    font-size: 20px;
-    color: #333;
-    display: block;
-    margin-bottom: 28px;
-}
-.form-registration-img {
-    margin-bottom: 40px;
-}
-.img-preview {
-    background: #A9A9A9;
-    width: 296px;
-    height: 296px;
-    vertical-align: bottom;
-    text-align: center;
-}
-.img-preview img {
-    width: auto;
-    height: auto;
-    max-height: 100%;
-    text-align: center;
-}
-.btn-player-img {
-    width: 296px;
-    margin: 50px auto 0;
-    display: block;
-    text-align: center;
-}
-.btn-player-info {
-    margin: 100px auto;
-    display: block;
-    text-align: center;
 }
 .btb-cmn-positive-01 {
     background: #1C7CD5;
@@ -513,63 +454,6 @@ player profile
     border-radius: 3px;
     font-size: 16px;
     color: #fff;
-}
-/* ==========================================================
-game
-========================================================== */
-.game-contents-left {
-    width: 100%;
-    float: none;
-}
-@media only screen and (min-width: 1240px) {
-    .game-contents-left {
-        width: 804px;
-        float: left;
-    }
-}
-.game-contents-right {
-    width: 94%;
-    margin: 0 3%;
-    float: none;
-}
-@media only screen and (min-width: 1201px) {
-    .game-contents-right {
-        width: 398px;
-        margin: auto;
-        float: right;
-    }
-}
-.nav-game {
-    background: #162F50;
-    padding: 11px 6px 7px 6px;
-    width: 94%;
-    margin: 0 3% 70px;
-    border-radius: 5px;
-}
-@media only screen and (min-width: 1201px) {
-    .nav-game {
-        width: 398px;
-        margin: auto;
-    }
-}
-.txt-game-score {
-    margin: 0 auto 10px auto;
-    text-align: center;
-    font-size: 22px;
-    color: #fff;
-}
-.nav-game-in {
-    background: #fff;
-    width: 100%;
-    margin: 0 auto;
-    padding: 23px 15px;
-    border-radius: 5px;
-}
-.txt-game-score-in {
-    background-size: 14px 22px;
-    margin: 0 0 2px 0;
-    padding: 0 0 0 22px;
-    font-size: 20px;
 }
 /* ==========================================================
 footer
@@ -722,14 +606,6 @@ area
 	text-align: center;
 	text-decoration: none;
 }
-.area-game {
-    margin: 0 0 70px 0;
-}
-@media only screen and (min-width: 1201px) {
-    .area-new-arrival {
-        margin: 0 0 71px 0;
-    }
-}
 /* ==========================================================
 section
 ========================================================== */
@@ -758,154 +634,6 @@ section
 .sec-ttl-in p {
     font-size: 20px;
     line-height: 1.5;
-}
-/* sec-game
----------------------------------------------------------- */
-.sec-game {
-    margin: 0 0 55px 0;
-    padding: 0 0 34px 0;
-    border-bottom: 2px solid #ececec;
-}
-.ttl-game-h2 {
-    text-align: center;
-    font-size: 26px;
-}
-@media only screen and (min-width: 1201px) {
-    .ttl-game-h2 {
-        font-size: 40px;
-    }
-}
-.ttl-game-h3 {
-    margin: 0 0 40px 0;
-    text-align: center;
-    font-size: 12px;
-    color: #A9A9A9;
-}
-@media only screen and (min-width: 1201px) {
-    .ttl-game-h3 {
-        font-size: 22px;
-    }
-}
-.box-game-in {
-    text-align: center;
-    letter-spacing: -.4em;
-}
-.mod-game-wrap {
-    width: 94%;
-    max-width: 390px;
-    height: 394px;
-    display: inline-block;
-    position: relative;
-    letter-spacing: 0em;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.16);
-    border-radius: 6px;
-    margin: 0 9.25px 20px;
-}
-@media only screen and (min-width: 796px) {
-    .mod-game-wrap:not(:nth-child(3n)) {
-        margin: 0 9.25px 0 0;
-    }
-}
-@media only screen and (min-width: 1201px) {
-    .mod-game-wrap:not(:nth-child(3n)) {
-        margin: 0 9.25px 0 0;
-    }
-}
-.bnr-game {
-    background: #F22735;
-    width: 168px;
-    margin: 0 0 0 -7px;
-    text-align: center;
-    position: relative;
-    z-index: 5;
-    line-height: 2.25;
-    font-size: 16px;
-    color: #fff;
-    border-radius: .31vw;
-}
-.img-game {
-    width: 100%;
-    max-width: 390px;
-    height: 160px;
-    border-radius: 6px 6px 0 0;
-    background-position: center;
-    background-size: cover;
-}
-.img-game {
-    width: 100%;
-    max-width: 390px;
-    height: 160px;
-    border-radius: 6px 6px 0 0;
-    background-position: center;
-    background-size: cover;
-}
-.ttl-game-individuality {
-    width: 90%;
-    max-width: 344px;
-    height: 67px;
-    margin: 26px 23px 16px 23px;
-    text-align: left;
-    line-height: 36px;
-    font-size: 22px;
-    color: #4D4D4D;
-    font-weight: bold;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-}
-.btn-game {
-    background: #162f50;
-    width: 151px;
-    height: 38px;
-    margin: 0 auto;
-    padding: 7px 0 0 0;
-    display: block;
-    text-align: center;
-    justify-content: center;
-    border-radius: 6px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.16);
-}
-.btn-game-detail {
-    display: block;
-    line-height: 1.8;
-    letter-spacing: .2em;
-    font-size: 14px;
-    color: #fff;
-}
-.ttl-game {
-    width: 94%;
-    margin: 0 3% 26px 3%;
-    padding: 0 0 0 15px;
-    line-height: 1;
-    letter-spacing: 0em;
-    font-size: 22px;
-    font-weight: bold;
-    color: #4d4d4d;
-    border-left: 4px solid #4d4d4d;
-}
-@media only screen and (min-width: 1201px) {
-    .ttl-game {
-        width: auto;
-        margin: 0 0 26px 0;
-    }
-}
-.txt-game {
-    width: 94%;
-    margin: 0 3% 18px 3%;
-    font-size: 14px;
-}
-@media only screen and (min-width: 1201px) {
-    .txt-game {
-        width: auto;
-        margin: 0 0 154px 0;
-        font-size: 20px;
-    }
-}
-#gamePivot {
-    position: relative;
-    width: 320px;
-    height: 320px;
 }
 /* ==========================================================
 is
