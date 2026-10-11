@@ -38,7 +38,8 @@ public class OneTimeCodeService {
     private final SecretKeySpec key;
 
     public OneTimeCodeService(AuthProperties properties) {
-        this.key = new SecretKeySpec(loadKey(properties.emailVerification().hmacKey()), HMAC_ALGORITHM);
+        this.key = new SecretKeySpec(loadKey(properties.emailVerification().hmacKey(),
+                properties.emailVerification().allowRandomHmacKey()), HMAC_ALGORITHM);
     }
 
     public String generateCode() {
@@ -63,10 +64,14 @@ public class OneTimeCodeService {
         return MessageDigest.isEqual(expected, actual);
     }
 
-    private byte[] loadKey(String configuredKey) {
+    private byte[] loadKey(String configuredKey, boolean allowRandomKey) {
         if (configuredKey == null || configuredKey.isBlank()) {
+            // A per-process key breaks pending codes on restart and across instances, so fail fast instead
+            if (!allowRandomKey) {
+                throw new IllegalStateException("app.security.email-verification.hmac-key must be set (APP_OTP_HMAC_KEY)");
+            }
             log.warn("app.security.email-verification.hmac-key is not set; using a random key for this process only. "
-                    + "Set APP_OTP_HMAC_KEY in production (the same value on every instance).");
+                    + "Only for local development and tests.");
             byte[] random = new byte[MIN_KEY_BYTES];
             secureRandom.nextBytes(random);
             return random;

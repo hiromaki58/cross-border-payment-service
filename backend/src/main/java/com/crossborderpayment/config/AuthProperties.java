@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -39,9 +40,11 @@ public record AuthProperties(
             @Min(1) int maxAttempts,
             @Min(1) int maxRequestsPerWindow,
             @NotNull Duration requestWindow,
-            String hmacKey) {
+            String hmacKey,
+            // Local development and tests only: a random per-process key when hmacKey is empty
+            boolean allowRandomHmacKey) {
     }
 
-    public record Mail(@NotBlank String from) {
+    public record Mail(@NotBlank @Email String from) {
     }
 }

@@ -16,10 +16,15 @@ import com.crossborderpayment.config.AuthProperties;
 class OneTimeCodeServiceTests {
 
     private static AuthProperties properties(String hmacKey) {
+        return properties(hmacKey, false);
+    }
+
+    private static AuthProperties properties(String hmacKey, boolean allowRandomHmacKey) {
         return new AuthProperties(List.of("http://localhost:3000"),
                 new AuthProperties.WebAuthn("localhost", "Test"),
                 new AuthProperties.Session(Duration.ofHours(8), Duration.ofMinutes(10), Duration.ofMinutes(5)),
-                new AuthProperties.EmailVerification(Duration.ofMinutes(10), 5, 3, Duration.ofHours(1), hmacKey),
+                new AuthProperties.EmailVerification(Duration.ofMinutes(10), 5, 3, Duration.ofHours(1), hmacKey,
+                        allowRandomHmacKey),
                 new AuthProperties.Mail("no-reply@localhost"), true);
     }
 
@@ -60,11 +65,22 @@ class OneTimeCodeServiceTests {
     }
 
     @Test
-    void randomKeyIsUsedWhenNoneIsConfigured() {
-        OneTimeCodeService service = new OneTimeCodeService(properties(""));
+    void randomKeyIsUsedWhenNoneIsConfiguredAndExplicitlyAllowed() {
+        OneTimeCodeService service = new OneTimeCodeService(properties("", true));
         String hash = service.hash("RECOVERY", "a@example.com", "12345678");
 
         assertThat(service.matches(hash, "RECOVERY", "a@example.com", "12345678")).isTrue();
+    }
+
+    @Test
+    void missingKeyIsRejectedAtStartupUnlessRandomKeyIsAllowed() {
+        assertThatThrownBy(() -> new OneTimeCodeService(properties("")))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("APP_OTP_HMAC_KEY");
+        assertThatThrownBy(() -> new OneTimeCodeService(properties("   ")))
+                .isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> new OneTimeCodeService(properties(null)))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
