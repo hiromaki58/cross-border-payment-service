@@ -1,5 +1,6 @@
 package com.crossborderpayment.config;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,7 +13,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
- * Until endpoints are implemented, the baseline configuration must deny every request.
+ * Every endpoint requires authentication unless it is explicitly made public,
+ * and state-changing requests require a CSRF token.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -22,27 +24,35 @@ class SecurityConfigTests {
 	private MockMvc mockMvc;
 
 	@Test
-	void unauthenticatedRequestIsDenied() throws Exception {
-		mockMvc.perform(get("/api/anything"))
-			.andExpect(status().isForbidden());
+	void unauthenticatedRequestReturns401() throws Exception {
+		mockMvc.perform(get("/api/remitter/anything"))
+			.andExpect(status().isUnauthorized());
 	}
 
 	@Test
-	@WithMockUser
-	void authenticatedRequestIsAlsoDenied() throws Exception {
-		mockMvc.perform(get("/api/anything"))
-			.andExpect(status().isForbidden());
-	}
-
-	@Test
-	void unauthenticatedPostIsDenied() throws Exception {
-		mockMvc.perform(post("/api/player/login"))
-			.andExpect(status().isForbidden());
+	void unauthenticatedPostWithCsrfTokenReturns401() throws Exception {
+		mockMvc.perform(post("/api/remitter/anything").with(csrf()))
+			.andExpect(status().isUnauthorized());
 	}
 
 	@Test
 	void httpBasicCredentialsAreNotAccepted() throws Exception {
-		mockMvc.perform(get("/api/anything").header("Authorization", "Basic dXNlcjp1c2Vy"))
+		mockMvc.perform(get("/api/remitter/anything").header("Authorization", "Basic dXNlcjp1c2Vy"))
+			.andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser
+	void authenticatedRequestPassesSecurity() throws Exception {
+		// No endpoint exists yet, so a request that passes security reaches MVC and gets 404
+		mockMvc.perform(get("/api/remitter/anything"))
+			.andExpect(status().isNotFound());
+	}
+
+	@Test
+	@WithMockUser
+	void authenticatedPostWithoutCsrfTokenIsRejected() throws Exception {
+		mockMvc.perform(post("/api/remitter/anything"))
 			.andExpect(status().isForbidden());
 	}
 
