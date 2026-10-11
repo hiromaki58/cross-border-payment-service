@@ -187,6 +187,30 @@ wrapper
     background: #fff;
     width: 100%;
 }
+/* Sticky footer: the page fills at least the window height and the footer stays at the bottom
+   even when the contents are short. Flex (not 100vh) because body is zoomed. */
+html {
+    height: 100%;
+}
+body {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+#root,
+.wrapper {
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+.wrapper > .footer {
+    margin-top: auto;
+}
+/* Keep the block-layout width inside the flex column (auto side margins would shrink it);
+   :where() keeps the specificity of ".contents" so the wide-screen width below still applies */
+:where(.wrapper) > .contents {
+    width: 100%;
+}
 /* ==========================================================
 header
 ========================================================== */
@@ -750,4 +774,46 @@ tool
     color: #fff;
     font-size: 30px;
     text-align: center;
+}/* ==========================================================
+top page title (from .area-game / .sec-game / .ttl-game-* of the design)
+========================================================== */
+.area-top {
+    margin: 0 0 70px 0;
+}
+.sec-top {
+    margin: 0 0 55px 0;
+    padding: 0 0 34px 0;
+}
+.ttl-top-h2 {
+    text-align: center;
+    font-size: 26px;
+}
+@media only screen and (min-width: 1201px) {
+    .ttl-top-h2 {
+        font-size: 40px;
+    }
+}
+.ttl-top-h3 {
+    margin: 0 0 40px 0;
+    text-align: center;
+    font-size: 12px;
+    color: #A9A9A9;
+}
+@media only screen and (min-width: 1201px) {
+    .ttl-top-h3 {
+        font-size: 22px;
+    }
+}
+/* Link to the login page, in the place of the former divider (same look as .form-login-button) */
+.box-top-login {
+    text-align: center;
+}
+.btn-top-login {
+    background: #1C7CD5;
+    padding: 12px 34px;
+    display: inline-block;
+    border-radius: 3px;
+    font-size: 16px;
+    color: #fff;
+    text-decoration: none;
 }
