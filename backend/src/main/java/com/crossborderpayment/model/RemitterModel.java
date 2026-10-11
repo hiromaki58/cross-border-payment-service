@@ -2,8 +2,10 @@ package com.crossborderpayment.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
+@Table(name = "remitters")
 public class RemitterModel extends BaseModel{
     @Column(nullable = false)
     private String firstName;
@@ -21,7 +23,7 @@ public class RemitterModel extends BaseModel{
         super(id);
         this.firstName = firstName;
         this.familyName = familyName;
-        this.emailAddr = emailAddr;
+        this.emailAddr = EmailAddressNormalizer.normalize(emailAddr);
     }
 
     public String getFirstName() {
@@ -44,7 +46,8 @@ public class RemitterModel extends BaseModel{
         return emailAddr;
     }
 
+    // Always store the normalized form so that "A@x.com" and " a@x.com" are the same remitter
     public void setEmailAddr(String emailAddr) {
-        this.emailAddr = emailAddr;
+        this.emailAddr = EmailAddressNormalizer.normalize(emailAddr);
     }
 }

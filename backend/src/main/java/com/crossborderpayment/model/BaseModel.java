@@ -1,6 +1,9 @@
 package com.crossborderpayment.model;
 
 import java.io.Serializable;
+import java.util.Objects;
+
+import org.hibernate.proxy.HibernateProxy;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,28 +31,32 @@ public class BaseModel implements Serializable{
         this.id = id;
     }
 
+    // Equality is based on the database id and the real entity class, so that a Hibernate proxy
+    // (lazy reference) and the loaded entity with the same id are equal.
+    // Entities without an id (not saved yet) are only equal to themselves.
+    // final: a proxy must not intercept these methods, otherwise it loads the entity (and fails outside a session).
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
             return false;
-        if (getClass() != obj.getClass())
+        if (effectiveClass(this) != effectiveClass(obj))
             return false;
         BaseModel other = (BaseModel) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+        // Use getId(): on a proxy it returns the id without loading the entity
+        return getId() != null && Objects.equals(getId(), other.getId());
+    }
+
+    // Constant per entity class so the value does not change when the id is assigned on save
+    @Override
+    public final int hashCode() {
+        return effectiveClass(this).hashCode();
+    }
+
+    private static Class<?> effectiveClass(Object obj) {
+        return obj instanceof HibernateProxy proxy
+                ? proxy.getHibernateLazyInitializer().getPersistentClass()
+                : obj.getClass();
     }
 }
