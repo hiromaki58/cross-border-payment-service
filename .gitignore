@@ -42,3 +42,6 @@ build/
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Design mockups (local reference only, not pushed)
+/html/
