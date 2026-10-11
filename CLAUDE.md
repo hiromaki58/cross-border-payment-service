@@ -466,6 +466,10 @@ modify, or delete User B's resource.
 
 After making changes, always provide a final report containing:
 
+## Git Commit Message
+
+Provide a suggested Git commit message based on the actual code changes.
+
 ## Changes
 
 - files changed;
@@ -491,3 +495,28 @@ If no remaining risks were identified, state that no known remaining risks
 were identified during the scope of the review.
 
 Do not claim that the application is completely secure.
+
+# Git Commit Message
+
+After completing code modifications, always suggest a Git commit message.
+
+Requirements:
+- Write the commit message in English.
+- Follow the Conventional Commits format.
+- Use an appropriate prefix:
+    - feat: New feature
+    - fix: Bug fix
+    - refactor: Code restructuring
+    - docs: Documentation changes
+    - test: Test changes
+    - chore: Maintenance tasks
+    - security: Security improvements
+- Keep the subject line concise, preferably under 72 characters.
+- Describe what was changed, not how it was implemented.
+- If multiple significant changes were made, include a short commit body.
+- Output the suggested commit message at the end of the final report.
+- Do not execute git commit or git push unless explicitly requested.
+
+Example:
+
+feat: integrate reusable header and footer components
