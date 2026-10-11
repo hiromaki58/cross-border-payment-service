@@ -9,7 +9,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationEventPublisher;
 import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
-import org.springframework.security.config.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,17 +23,22 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfFilter;
 import org.springframework.security.web.header.writers.ClearSiteDataHeaderWriter;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.savedrequest.NullRequestCache;
-import org.springframework.security.web.webauthn.authentication.WebAuthnAuthenticationFilter;
+import org.springframework.security.web.webauthn.management.UserCredentialRepository;
+import org.springframework.security.web.webauthn.management.WebAuthnRelyingPartyOperations;
 
 import com.crossborderpayment.repository.RemitterRepository;
 import com.crossborderpayment.security.AuthSessionManager;
-import com.crossborderpayment.security.PasskeyLoginSuccessHandler;
+import com.crossborderpayment.security.PasskeyEndpoints;
 import com.crossborderpayment.security.PasskeyRegistrationGuardFilter;
 import com.crossborderpayment.security.RemitterUserDetailsService;
 import com.crossborderpayment.security.Roles;
 import com.crossborderpayment.security.SessionLifetimeFilter;
 import com.crossborderpayment.service.AuthMailSender;
+
+import jakarta.servlet.DispatcherType;
 
 /**
  * Security configuration.
@@ -44,9 +48,10 @@ import com.crossborderpayment.service.AuthMailSender;
  * Login flow:
  *  1. New user / account recovery: e-mail one-time code (/api/auth/registration, /api/auth/recovery,
  *     /api/auth/email-verification) -> limited session (ROLE_PASSKEY_ENROLLMENT) that can only
- *     register a passkey (Spring Security: /webauthn/register/options, /webauthn/register).
- *  2. Login: passkey with user verification (Spring Security: /webauthn/authenticate/options,
- *     /login/webauthn) -> ROLE_REMITTER.
+ *     register a passkey (/api/auth/passkey/register/options, /api/auth/passkey/register).
+ *  2. Login: passkey with user verification (/api/auth/passkey/login/options,
+ *     /api/auth/passkey/login) -> ROLE_REMITTER.
+ * All endpoints are under /api (see PasskeyEndpoints).
  *
  * Sessions are server-side (HttpOnly / Secure / SameSite=Strict cookie). CSRF protection stays enabled,
  * using a readable XSRF-TOKEN cookie that the SPA sends back in the X-XSRF-TOKEN header.
@@ -62,19 +67,24 @@ public class SecurityConfig {
 			AuthSessionManager authSessionManager, AuthMailSender authMailSender,
 			SessionAuthenticationStrategy sessionAuthenticationStrategy,
 			SecurityContextRepository securityContextRepository, CookieCsrfTokenRepository csrfTokenRepository,
-			Environment environment) throws Exception {
+			WebAuthnRelyingPartyOperations rpOperations, UserCredentialRepository userCredentials,
+			AuthenticationEventPublisher authenticationEventPublisher, Environment environment) throws Exception {
 		// Used only by the passkey provider (not a bean, so no password-based provider is created)
-		http.setSharedObject(UserDetailsService.class, new RemitterUserDetailsService(remitterRepository));
+		UserDetailsService userDetailsService = new RemitterUserDetailsService(remitterRepository);
 
 		http
 			.authorizeHttpRequests(auth -> auth
+				// Error responses (e.g. 403 for a missing CSRF token) are rendered by an internal ERROR dispatch to
+				// /error; it must not be re-authorized, otherwise every error becomes 401 for anonymous users.
+				// The error body never contains details (server.error.include-* = never).
+				.dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
 				.requestMatchers(HttpMethod.GET, "/api/auth/csrf").permitAll()
 				.requestMatchers(HttpMethod.POST, "/api/auth/registration", "/api/auth/recovery",
 						"/api/auth/email-verification").permitAll()
-				.requestMatchers(HttpMethod.POST, "/webauthn/authenticate/options", "/login/webauthn").permitAll()
-				.requestMatchers(HttpMethod.POST, "/webauthn/register").hasAnyRole(Roles.REMITTER, Roles.PASSKEY_ENROLLMENT)
-				// Spring's DELETE /webauthn/register/{id} and the HTML page are not used; use /api/passkeys instead
-				.requestMatchers("/webauthn/register/**").denyAll()
+				.requestMatchers(HttpMethod.POST, PasskeyEndpoints.LOGIN_OPTIONS, PasskeyEndpoints.LOGIN).permitAll()
+				// Further checked by PasskeyRegistrationGuardFilter (role, recent login)
+				.requestMatchers(HttpMethod.POST, PasskeyEndpoints.REGISTER_OPTIONS, PasskeyEndpoints.REGISTER)
+					.hasAnyRole(Roles.REMITTER, Roles.PASSKEY_ENROLLMENT)
 				.requestMatchers(HttpMethod.GET, "/api/auth/session").hasAnyRole(Roles.REMITTER, Roles.PASSKEY_ENROLLMENT)
 				.anyRequest().hasRole(Roles.REMITTER))
 			// Not logged in -> 401, logged in but not allowed -> 403
@@ -86,18 +96,6 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.spa().csrfTokenRepository(csrfTokenRepository))
 			.sessionManagement(session -> session
 				.sessionFixation(fixation -> fixation.changeSessionId()))
-			.webAuthn(webAuthn -> webAuthn
-				.disableDefaultRegistrationPage(true)
-				// The WebAuthn login filter does not apply the session strategy by default
-				.withObjectPostProcessor(new ObjectPostProcessor<WebAuthnAuthenticationFilter>() {
-					@Override
-					public <O extends WebAuthnAuthenticationFilter> O postProcess(O filter) {
-						filter.setSessionAuthenticationStrategy(sessionAuthenticationStrategy);
-						filter.setSecurityContextRepository(securityContextRepository);
-						filter.setAuthenticationSuccessHandler(new PasskeyLoginSuccessHandler(authSessionManager));
-						return filter;
-					}
-				}))
 			.logout(logout -> logout
 				.logoutUrl("/api/auth/logout")
 				.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.NO_CONTENT))
@@ -112,7 +110,14 @@ public class SecurityConfig {
 				.contentSecurityPolicy(csp -> csp.policyDirectives("default-src 'none'; frame-ancestors 'none'"))
 				.referrerPolicy(referrer -> referrer.policy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER)))
 			.addFilterAfter(new SessionLifetimeFilter(authSessionManager), SecurityContextHolderFilter.class)
-			.addFilterBefore(new PasskeyRegistrationGuardFilter(authSessionManager, authMailSender), CsrfFilter.class);
+			.addFilterBefore(new PasskeyRegistrationGuardFilter(authSessionManager, authMailSender), CsrfFilter.class)
+			// Passkey ceremonies (same positions as Spring Security's own WebAuthn configuration)
+			.addFilterBefore(PasskeyEndpoints.loginFilter(rpOperations, userDetailsService, authenticationEventPublisher,
+					sessionAuthenticationStrategy, securityContextRepository, authSessionManager),
+					BasicAuthenticationFilter.class)
+			.addFilterBefore(PasskeyEndpoints.loginOptionsFilter(rpOperations), AuthorizationFilter.class)
+			.addFilterBefore(PasskeyEndpoints.registerOptionsFilter(rpOperations), AuthorizationFilter.class)
+			.addFilterAfter(PasskeyEndpoints.registerFilter(userCredentials, rpOperations), AuthorizationFilter.class);
 		return http.build();
 	}
 
