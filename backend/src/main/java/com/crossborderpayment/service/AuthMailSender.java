@@ -5,6 +5,7 @@ import java.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.env.Environment;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,9 +29,15 @@ public class AuthMailSender {
     private final ObjectProvider<JavaMailSender> mailSender;
     private final AuthProperties properties;
 
-    public AuthMailSender(ObjectProvider<JavaMailSender> mailSender, AuthProperties properties) {
+    public AuthMailSender(ObjectProvider<JavaMailSender> mailSender, AuthProperties properties, Environment environment) {
         this.mailSender = mailSender;
         this.properties = properties;
+        // Without an SMTP server no verification code could be sent, while the API would still report
+        // "a code has been sent"; fail at startup instead of silently dropping every e-mail
+        String host = environment.getProperty("spring.mail.host");
+        if (!properties.mail().allowMissingSmtp() && (host == null || host.isBlank() || mailSender.getIfAvailable() == null)) {
+            throw new IllegalStateException("spring.mail.host must be set (SPRING_MAIL_HOST)");
+        }
     }
 
     @Async

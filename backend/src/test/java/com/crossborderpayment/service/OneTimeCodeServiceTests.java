@@ -25,7 +25,7 @@ class OneTimeCodeServiceTests {
                 new AuthProperties.Session(Duration.ofHours(8), Duration.ofMinutes(10), Duration.ofMinutes(5)),
                 new AuthProperties.EmailVerification(Duration.ofMinutes(10), 5, 3, Duration.ofHours(1), hmacKey,
                         allowRandomHmacKey),
-                new AuthProperties.Mail("no-reply@localhost"), true);
+                new AuthProperties.Mail("no-reply@localhost", false), true);
     }
 
     private static final String KEY = Base64.getEncoder().encodeToString(new byte[32]);
