@@ -1,8 +1,12 @@
 package com.crossborderpayment.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -93,6 +97,58 @@ class PasskeyControllerTests extends AuthIntegrationTestSupport {
 
         assertThat(credentialIdsOf(BOB)).hasSize(2);
         verify(mailSender, never()).sendPasskeyRemovedNotice(anyString());
+    }
+
+    @Test
+    void eachRemitterListsOnlyTheirOwnPasskeys() throws Exception {
+        MockHttpSession alice = registerAndLogin(ALICE, new PasskeyTestClient(mockMvc));
+        new PasskeyTestClient(mockMvc).register(alice, "Alice second").andExpect(status().isOk());
+        MockHttpSession bob = registerAndLogin(BOB, new PasskeyTestClient(mockMvc));
+        List<String> aliceIds = credentialIdsOf(ALICE);
+        List<String> bobIds = credentialIdsOf(BOB);
+
+        mockMvc.perform(get("/api/passkeys").session(alice))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[*].id", containsInAnyOrder(aliceIds.toArray())))
+                .andExpect(jsonPath("$[*].id", not(hasItem(bobIds.get(0)))));
+        mockMvc.perform(get("/api/passkeys").session(bob))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id").value(bobIds.get(0)))
+                .andExpect(jsonPath("$[*].id", not(hasItem(aliceIds.get(0)))))
+                .andExpect(jsonPath("$[*].id", not(hasItem(aliceIds.get(1)))));
+    }
+
+    @Test
+    void anotherRemittersLastPasskeyLooksMissingRatherThanProtected() throws Exception {
+        MockHttpSession alice = registerAndLogin(ALICE, new PasskeyTestClient(mockMvc));
+        registerAndLogin(BOB, new PasskeyTestClient(mockMvc));
+        String bobsOnlyCredential = credentialIdsOf(BOB).get(0);
+
+        // 404 (not 409 "last passkey"), so the response reveals nothing about Bob's account
+        mockMvc.perform(delete("/api/passkeys/" + bobsOnlyCredential).session(alice).with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.detail").value("The passkey was not found."));
+
+        assertThat(credentialIdsOf(BOB)).containsExactly(bobsOnlyCredential);
+        verify(mailSender, never()).sendPasskeyRemovedNotice(anyString());
+    }
+
+    @Test
+    void passkeyRegisteredByARemitterIsAddedOnlyToTheirOwnAccount() throws Exception {
+        MockHttpSession alice = registerAndLogin(ALICE, new PasskeyTestClient(mockMvc));
+        registerAndLogin(BOB, new PasskeyTestClient(mockMvc));
+        List<String> bobIdsBefore = credentialIdsOf(BOB);
+        // Ignore the notices sent while setting up both accounts
+        clearInvocations(mailSender);
+
+        new PasskeyTestClient(mockMvc).register(alice, "Alice second").andExpect(status().isOk());
+
+        assertThat(credentialIdsOf(ALICE)).hasSize(2);
+        assertThat(credentialIdsOf(BOB)).isEqualTo(bobIdsBefore);
+        verify(mailSender).sendPasskeyAddedNotice(ALICE);
+        verify(mailSender, never()).sendPasskeyAddedNotice(BOB);
     }
 
     @Test
