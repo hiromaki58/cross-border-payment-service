@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import { useAuthProvider } from "../context/AuthContext";
 import "../css/base-pc.css";
 
-// Top page. The title follows the title of reference/html/src/index.html (.ttl-game-* styles, renamed .ttl-top-*).
+// Top page.
 const HomePage: React.FC = () => {
     const { isLoggedIn } = useAuthProvider();
 

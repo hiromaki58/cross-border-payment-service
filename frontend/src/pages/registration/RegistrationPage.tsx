@@ -36,7 +36,7 @@ const CONTROL_CHARACTERS = /[\u0000-\u001F\u007F-\u009F]/;
 const isValidText = (value: string, maxLength: number): boolean =>
     value.trim().length > 0 && value.length <= maxLength && !CONTROL_CHARACTERS.test(value);
 
-// Registration with e-mail verification and a passkey. The design follows reference/html/src/registration/registration.html.
+// Registration with e-mail verification and a passkey.
 const RegistrationPage: React.FC = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState<Step>("information");

@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 /* ==========================================================
- registration (from reference/html/src/registration/css/registration.css)
+ registration
 ========================================================== */
 .sec-register-player-01 {
     margin: 0 0 70px 0;
@@ -69,7 +69,7 @@
     text-decoration: underline;
     cursor: pointer;
 }
-/* The design uses <p> for these titles; <label> needs block display to keep the same spacing */
+/* <label> is inline by default; block display is needed for the bottom margin to apply */
 label.form-registrtion-ttl-01,
 label.form-registrtion-ttl-02 {
     display: block;
