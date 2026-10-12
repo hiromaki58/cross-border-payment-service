@@ -1,0 +1,9 @@
+# Only the sources needed for the build are sent to Docker
+node_modules
+build
+coverage
+src/dist
+.env
+.env.*
+Dockerfile
+.dockerignore

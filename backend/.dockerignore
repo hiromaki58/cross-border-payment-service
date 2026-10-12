@@ -1,0 +1,15 @@
+# Only the sources needed for the build are sent to Docker
+build
+.gradle
+bin
+out
+.idea
+*.iml
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.jks
+Dockerfile
+.dockerignore

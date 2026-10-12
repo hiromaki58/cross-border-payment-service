@@ -15,7 +15,7 @@ const MESSAGES = {
     error: "Login is not available right now. Please try again later.",
 } as const;
 
-// Passkey login (the only login method). The design follows html/src/login/login.html.
+// Passkey login (the only login method). The design follows reference/html/src/login/login.html.
 const LoginPage: React.FC = () => {
     const { login } = useAuthProvider();
     const navigate = useNavigate();
