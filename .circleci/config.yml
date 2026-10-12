@@ -1,5 +1,7 @@
 version: 2.1
 
+# Pipeline: test-backend and test-frontend run on every push; build-and-deploy runs only on main after both pass.
+
 # Required CircleCI project environment variables (Project Settings > Environment Variables; never commit them):
 #   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY  IAM user for deployment (ECR push and ECS update only)
 #   AWS_REGION                                e.g. ap-northeast-1
