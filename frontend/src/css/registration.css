@@ -1,0 +1,76 @@
+@charset "UTF-8";
+
+/* ==========================================================
+ registration (from html/src/registration/css/registration.css)
+========================================================== */
+.sec-register-player-01 {
+    margin: 0 0 70px 0;
+}
+.ttl-register-player {
+    margin: 0 0 35px 0;
+    padding: 0 0 0 15px;
+    border-left: 4px solid #4d4d4d;
+    line-height: 1;
+    letter-spacing: 0em;
+    font-size: 22px;
+    font-weight: bold;
+    color: #4D4D4D;
+}
+.form-cmn-01-wrap {
+    width: 602px;
+    margin: 0 0 0 100px;
+    display: flex;
+}
+.form-cmn-01 {
+    width: 602px;
+}
+.btn-registration-player {
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+.form-registrtion-ttl-01 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+}
+.form-registrtion-ttl-02 {
+    margin: 0 0 14px 0;
+}
+.form-registrtion-input-01 {
+    width: 288px;
+    height: 40px;
+    margin: 0 26px 21px 0;
+}
+.form-registrtion-input-02 {
+    width: 602px;
+    height: 40px;
+    margin: 0 26px 21px 0;
+}
+.form-registrtion-input-01::placeholder,
+.form-registrtion-input-02::placeholder {
+    padding: 0 0 0 10px;
+}
+/* Explanations and messages of the e-mail code and passkey steps */
+.txt-registration-detail {
+    margin: 0 0 21px 100px;
+    font-size: 16px;
+}
+.txt-registration-error {
+    margin: 0 0 21px 100px;
+    font-size: 16px;
+    color: #C62828;
+}
+.btn-registration-sub {
+    background: none;
+    padding: 0;
+    border-style: none;
+    font-size: 16px;
+    color: #1C7CD5;
+    text-decoration: underline;
+    cursor: pointer;
+}
+/* The design uses <p> for these titles; <label> needs block display to keep the same spacing */
+label.form-registrtion-ttl-01,
+label.form-registrtion-ttl-02 {
+    display: block;
+}
