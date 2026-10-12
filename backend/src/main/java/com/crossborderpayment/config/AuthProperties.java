@@ -45,6 +45,9 @@ public record AuthProperties(
             boolean allowRandomHmacKey) {
     }
 
-    public record Mail(@NotBlank @Email String from) {
+    public record Mail(
+            @NotBlank @Email String from,
+            // Tests only: start without an SMTP server (spring.mail.host); e-mails are then not sent
+            boolean allowMissingSmtp) {
     }
 }

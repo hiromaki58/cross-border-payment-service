@@ -131,6 +131,20 @@ class EmailVerificationFlowTests extends AuthIntegrationTestSupport {
     }
 
     @Test
+    void correctCodeStillWorksOnTheLastAllowedAttempt() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        startRegistration(session, EMAIL);
+        String code = lastCodeSentTo(EMAIL);
+        String wrong = code.equals("00000000") ? "11111111" : "00000000";
+
+        // max-attempts=5: four wrong attempts leave exactly one attempt
+        for (int i = 0; i < 4; i++) {
+            submitCode(session, wrong).andExpect(status().isBadRequest());
+        }
+        submitCode(session, code).andExpect(status().isOk());
+    }
+
+    @Test
     void codeCanBeUsedOnlyOnce() throws Exception {
         MockHttpSession session = new MockHttpSession();
         startRegistration(session, EMAIL);
@@ -184,6 +198,34 @@ class EmailVerificationFlowTests extends AuthIntegrationTestSupport {
 
         verify(mailSender, times(3)).sendVerificationCode(anyString(), anyString(), any());
         submitCode(session, lastCodeSentTo(EMAIL)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void registrationAndRecoveryShareTheRateLimitOfAnAddress() throws Exception {
+        // Mixing purposes must not give an attacker more codes (and more guesses) for one address
+        startRegistration(new MockHttpSession(), EMAIL).andExpect(status().isAccepted());
+        startRecovery(new MockHttpSession(), EMAIL).andExpect(status().isAccepted());
+        startRegistration(new MockHttpSession(), EMAIL).andExpect(status().isAccepted());
+
+        startRegistration(new MockHttpSession(), EMAIL).andExpect(status().isAccepted());
+
+        // Only the two registrations sent a code (recovery of an unknown address sends nothing)
+        verify(mailSender, times(2)).sendVerificationCode(anyString(), anyString(), any());
+    }
+
+    @Test
+    void codesCanBeRequestedAgainAfterTheRateLimitWindow() throws Exception {
+        for (int i = 0; i < 3; i++) {
+            startRegistration(new MockHttpSession(), EMAIL).andExpect(status().isAccepted());
+        }
+        // request-window=1h: move the earlier requests out of the window
+        jdbc.update("UPDATE email_verification_challenges SET created_at = created_at - INTERVAL '2' HOUR");
+        MockHttpSession session = new MockHttpSession();
+
+        startRegistration(session, EMAIL).andExpect(status().isAccepted());
+
+        verify(mailSender, times(4)).sendVerificationCode(anyString(), anyString(), any());
+        submitCode(session, lastCodeSentTo(EMAIL)).andExpect(status().isOk());
     }
 
     // --- input validation ---

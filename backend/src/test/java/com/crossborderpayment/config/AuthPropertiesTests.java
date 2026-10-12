@@ -35,12 +35,12 @@ class AuthPropertiesTests {
     @NullAndEmptySource
     @ValueSource(strings = { "   ", "not-an-address", "no-reply@" })
     void missingOrMalformedSenderIsRejected(String from) {
-        assertThat(validator.validate(new AuthProperties.Mail(from))).isNotEmpty();
+        assertThat(validator.validate(new AuthProperties.Mail(from, false))).isNotEmpty();
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "no-reply@example.com", "no-reply@localhost" })
     void validSenderIsAccepted(String from) {
-        assertThat(validator.validate(new AuthProperties.Mail(from))).isEmpty();
+        assertThat(validator.validate(new AuthProperties.Mail(from, false))).isEmpty();
     }
 }

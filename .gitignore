@@ -43,5 +43,5 @@ build/
 .env.test.local
 .env.production.local
 
-# Design mockups (local reference only, not pushed)
-/html/
+# Local reference material (design mockups, old Dockerfiles); never pushed
+/reference/
