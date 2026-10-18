@@ -45,3 +45,10 @@ build/
 
 # Local reference material (design mockups, old Dockerfiles); never pushed
 /reference/
+
+# Terraform (.terraform.lock.hcl is committed to pin provider versions)
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log

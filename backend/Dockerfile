@@ -61,4 +61,5 @@ USER app
 EXPOSE 8080
 
 # Start the application. MaxRAMPercentage lets the JVM use up to 75% of the container's memory limit.
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-jar", "/app/app.jar"]
+# user.timezone=UTC: date-times are stored in MySQL DATETIME columns (no time zone) and must always be UTC.
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75.0", "-Duser.timezone=UTC", "-jar", "/app/app.jar"]
