@@ -80,10 +80,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.main.id
 
   # 既存の NAT ゲートウェイへのルート（状態を確認後に整理する）
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = "nat-00fb14a8686c8fedb"
-  }
+  route = []
 
   tags = {
     Name  = "WebGameRTPrivate"
@@ -93,6 +90,22 @@ resource "aws_route_table" "private" {
 
 resource "aws_route_table_association" "private_1b" {
   subnet_id      = aws_subnet.private_1b.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_subnet" "private_1a" {
+  vpc_id                  = aws_vpc.main.id
+  availability_zone       = "us-east-1a"
+  cidr_block              = "172.31.96.0/20"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "cross-border-payment-private-1a"
+  }
+}
+
+resource "aws_route_table_association" "private_1a" {
+  subnet_id      = aws_subnet.private_1a.id
   route_table_id = aws_route_table.private.id
 }
 
