@@ -81,3 +81,8 @@ resource "aws_secretsmanager_secret_version" "smtp" {
     password = aws_iam_access_key.ses_smtp.ses_smtp_password_v4
   })
 }
+
+# バウンス（宛先不明）と苦情があったアドレスへの送信を自動で止める
+resource "aws_sesv2_account_suppression_attributes" "main" {
+  suppressed_reasons = ["BOUNCE", "COMPLAINT"]
+}

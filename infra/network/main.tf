@@ -121,8 +121,9 @@ resource "aws_security_group" "rds" {
     to_port   = 3306
     protocol  = "tcp"
     security_groups = [
-      "sg-052217c72946c3577", # WebGameBastionSG
-      "sg-076ea4e2a353bc30d", # eks-cluster-sg-webgame-cluster
+      "sg-052217c72946c3577",              # WebGameBastionSG
+      "sg-076ea4e2a353bc30d",              # eks-cluster-sg-webgame-cluster
+      aws_security_group.ecs_instances.id, # ECS の EC2 インスタンス（security_groups.tf）
     ]
   }
 
