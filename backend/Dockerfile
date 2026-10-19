@@ -50,6 +50,19 @@ WORKDIR /app
 # so that the application does not run as root
 RUN groupadd --system app && useradd --system --gid app --no-create-home --shell /usr/sbin/nologin app
 
+# Trust the Amazon RDS certificate authorities.
+# DB_URL uses sslMode=VERIFY_IDENTITY (required by caching_sha2_password over TLS, see application.properties),
+# which verifies the RDS server certificate. The RDS CAs are not in the JDK's default trust store, so every
+# certificate of AWS's official global bundle is imported into the JRE's cacerts. Only public CA certificates
+# are added; no secret is copied into the image.
+ADD https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem /tmp/rds-global-bundle.pem
+RUN cd /tmp \
+    && awk '/-----BEGIN CERTIFICATE-----/{n++} n>0{print > ("rds-ca-" n ".pem")}' rds-global-bundle.pem \
+    && for cert in rds-ca-*.pem; do \
+         keytool -importcert -noprompt -cacerts -storepass changeit -alias "aws-${cert%.pem}" -file "$cert" > /dev/null; \
+       done \
+    && rm -f /tmp/rds-global-bundle.pem /tmp/rds-ca-*.pem
+
 # Copy only the JAR from the build stage. It stays owned by root (read-only for "app"),
 # so the running application cannot modify its own code.
 COPY --from=build --chown=root:root /workspace/app.jar app.jar
